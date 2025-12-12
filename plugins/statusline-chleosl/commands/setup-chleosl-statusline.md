@@ -3,7 +3,7 @@ Update ~/.claude/settings.json to configure the statusLine setting as follows:
   ```json
   "statusLine": {
     "type": "command",
-    "command": "~/.claude/plugins/marketplaces/chleosl-plugins/plugins/claude-code-statusline-chleosl/statusline.sh",
+    "command": "~/.claude/plugins/marketplaces/chleosl-plugins/plugins/statusline-chleosl/statusline.sh",
     "padding": 0
   }
 

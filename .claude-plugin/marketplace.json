@@ -14,7 +14,7 @@
       },
       "homepage": "https://github.com/chleosl/claude-code-statusline",
       "license": "MIT",
-      "keywords": ["statusline", "status", "ui", "context", "weather", "subtle", "unobtrusive", "low-profile"]
+      "keywords": ["unobtrusive", "low-profile", "statusline", "ui", "context", "weather"]
     }
   ]
 }

@@ -1,0 +1,13 @@
+{
+  "name": "statusline-chleosl",
+  "description": "Unobtrusive and low-profile custom statusline for Claude Code CLI with session stats, context usage, git info, weather, and time. Execute /setup-chleosl-statusline to setup the statusline.",
+  "version": "1.0.0",
+  "author": {
+    "name": "chleosl",
+    "url": "https://github.com/chleosl"
+  },
+  "homepage": "https://github.com/chleosl/claude-code-statusline",
+  "repository": "https://github.com/chleosl/claude-code-statusline",
+  "license": "MIT",
+  "keywords": ["unobtrusive", "low-profile", "statusline", "ui", "context", "weather"]
+}
