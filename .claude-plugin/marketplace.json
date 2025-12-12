@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "claude-code-statusline",
-      "source": "./claude-code-statusline",
+      "source": "./plugins/claude-code-statusline",
       "description": "Unobtrusive and low-profile custom statusline for Claude Code CLI with session stats, context usage, git info, weather, and time. Run /setup-chleosl-statusline to setup the statusline.",
       "version": "1.0.0",
       "author": {
