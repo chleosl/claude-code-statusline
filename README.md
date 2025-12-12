@@ -21,15 +21,6 @@ Line 3: location: temp condition icon
 Line 4: current_working_directory
 ```
 
-## Progress Indicator States
-
-The progress bar uses a gradient color scheme (gray → red) that cycles twice per 10%:
-
-```
-_   _   _   _   _   ▯   ▯   ▯   ▯   ▯
-0   1   2   3   4   5   6   7   8   9
-```
-
 ## Installation
 
 ```bash
