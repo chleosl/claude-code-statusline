@@ -1,0 +1,8 @@
+{
+  "name": "claude-code-statusline",
+  "description": "Custom statusline for Claude Code CLI with session stats, context usage, git info, weather, and time",
+  "version": "1.0.0",
+  "author": {
+    "name": "chleosl"
+  }
+}
