@@ -5,18 +5,26 @@
 # A customizable statusline script for Claude Code CLI.
 # Displays session stats, context usage, git info, weather, and time.
 #
-# Output format (4 lines):
+# Output format (up to 4 lines):
 #   Line 1: +added/-removed (session) +added/-removed (git) | usage% [progress] (tokens) | time
-#   Line 2: branch last_commit_hash last_commit_message
-#   Line 3: location: temp condition icon
-#   Line 4: current_working_directory
+#   Line 2: branch last_commit_hash last_commit_message (always shown if not main/master)
+#   Line 3: location: temp condition icon (optional)
+#   Line 4: current_working_directory (optional)
 #
 # Dependencies: jq, curl, git, awk
 #
-# Configuration:
-#   ~/.claude/statusline-blink  - Set to "on" to enable blinking progress indicator
-#   ~/.claude/statusline-extra  - Set to "on" to show weather and cwd lines (default: off)
-#
+
+# ============================================================
+# USER CONFIGURATION - Edit these values to customize behavior
+# ============================================================
+
+# Blink effect for progress bar indicator ("on" or "off")
+blink_enabled="off"
+
+# Show extra lines: weather and current directory ("on" or "off")
+show_extra="on"
+
+# ============================================================
 
 # Read stdin JSON data from Claude Code
 input=$(cat)
@@ -35,14 +43,18 @@ lines_added=$(echo "$input" | jq -r '.cost.total_lines_added // 0')
 lines_removed=$(echo "$input" | jq -r '.cost.total_lines_removed // 0')
 
 # === Context Window Usage ===
-total_input=$(echo "$input" | jq -r '.context_window.total_input_tokens // 0')
-total_output=$(echo "$input" | jq -r '.context_window.total_output_tokens // 0')
+# Use current_usage field for accurate context window measurement
+usage=$(echo "$input" | jq '.context_window.current_usage')
 context_size=$(echo "$input" | jq -r '.context_window.context_window_size // 200000')
 
-total_tokens=$((total_input + total_output))
-if [ "$context_size" -gt 0 ]; then
-    usage_percent=$(awk "BEGIN {printf \"%.0f\", ($total_tokens / $context_size) * 100}")
+if [ "$usage" != "null" ]; then
+    # Calculate current context usage (includes all input tokens)
+    current_tokens=$(echo "$usage" | jq '(.input_tokens + .cache_creation_input_tokens + .cache_read_input_tokens)')
+    total_tokens=$current_tokens
+    usage_percent=$(awk "BEGIN {printf \"%.0f\", ($current_tokens / $context_size) * 100}")
 else
+    # No messages yet
+    total_tokens=0
     usage_percent="0"
 fi
 
@@ -52,13 +64,6 @@ bar_length=10
 filled=$((usage_percent / 10))
 remainder=$((usage_percent % 10))
 
-# Optional blink effect for current position indicator
-blink_enabled="off"
-[ -f ~/.claude/statusline-blink ] && blink_enabled=$(cat ~/.claude/statusline-blink)
-
-# Show extra lines (weather, cwd) - default on
-show_extra="on"
-[ -f ~/.claude/statusline-extra ] && show_extra=$(cat ~/.claude/statusline-extra)
 
 # Gradient colors for partial segment (cycles 0-4, 5-9: gray → red)
 PARTIAL_COLORS=(
@@ -72,6 +77,20 @@ PARTIAL_COLORS=(
     "\033[38;5;217m"    # 7: light red
     "\033[38;5;131m"    # 8: dark red
     "\033[38;5;88m"     # 9: deep red
+)
+
+# Same colors with blink (SGR 5) combined in single sequence
+PARTIAL_COLORS_BLINK=(
+    "\033[5;38;5;250m"  # 0: light gray + blink
+    "\033[5;38;5;181m"  # 1: light pink + blink
+    "\033[5;38;5;217m"  # 2: light red + blink
+    "\033[5;38;5;131m"  # 3: dark red + blink
+    "\033[5;38;5;88m"   # 4: deep red + blink
+    "\033[5;38;5;250m"  # 5: light gray + blink
+    "\033[5;38;5;181m"  # 6: light pink + blink
+    "\033[5;38;5;217m"  # 7: light red + blink
+    "\033[5;38;5;131m"  # 8: dark red + blink
+    "\033[5;38;5;88m"   # 9: deep red + blink
 )
 
 # Gradient colors for token count display (0-100%: gray → red)
@@ -98,17 +117,20 @@ fi
 
 # Current position indicator (0-4: _, 5-9: ▯)
 if [ "$filled" -lt 10 ]; then
-    PARTIAL_COLOR="${PARTIAL_COLORS[$remainder]}"
+    # Select color array based on blink setting (combined SGR sequence)
+    if [ "$blink_enabled" = "on" ]; then
+        PARTIAL_COLOR="${PARTIAL_COLORS_BLINK[$remainder]}"
+    else
+        PARTIAL_COLOR="${PARTIAL_COLORS[$remainder]}"
+    fi
+
     if [ "$remainder" -le 4 ]; then
         partial="_"
     else
         partial="▯"
     fi
-    if [ "$blink_enabled" = "on" ]; then
-        progress_bar="${progress_bar}${PARTIAL_COLOR}\033[5m${partial}\033[0m"
-    else
-        progress_bar="${progress_bar}${PARTIAL_COLOR}${partial}${RESET}"
-    fi
+
+    progress_bar="${progress_bar}${PARTIAL_COLOR}${partial}\033[0m"
 fi
 
 # Empty segments

@@ -1,6 +1,6 @@
 # Claude Code Statusline
 
-Custom statusline for Claude Code CLI.
+Concise, Low-profile and Unobstructive custom statusline for Claude Code CLI.
 
 ## Features
 
@@ -32,6 +32,7 @@ Line 4: current_working_directory
 ## Image
 
 ![Claude Statusline Overview](./assets/claude_statusline_overview.png)
+![Claude Statusline Overview](./assets/claude_statusline_overview_bright.png)
 <p align="center">
 <img src="./assets/claude_statusline_overview_close.png" width="85%">
 </p>
