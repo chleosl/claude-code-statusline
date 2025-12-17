@@ -1,6 +1,6 @@
 # Claude Code Statusline
 
-Concise, Low-profile and Unobstructive custom statusline for Claude Code CLI.
+Concise, Unobtrusive and low-profile custom statusline for Claude Code CLI shows session stats, context usage, git info, weather, and time.
 
 ## Features
 
@@ -25,7 +25,7 @@ Line 4: current_working_directory
 
 ```bash
 /plugin marketplace add chleosl/claude-code-statusline-chleosl
-/plugin install claude-code-statusline@claude-code-statusline-chleosl
+/plugin install concise-statusline-chleosl@claude-code-statusline-chleosl
 /setup-chleosl-statusline
 ```
 
